@@ -1,0 +1,67 @@
+[build-system]
+requires = ["hatchling>=1.26"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ultimate-pdf-telegram-assistant"
+version = "0.1.0"
+description = "Secure, modular Telegram PDF processing assistant"
+readme = "README.md"
+requires-python = ">=3.12"
+license = {text = "MIT"}
+authors = [{name = "PDF Assistant maintainers"}]
+dependencies = [
+  "aiogram>=3.13,<4",
+  "fastapi>=0.115,<1",
+  "uvicorn[standard]>=0.30,<1",
+  "pydantic>=2.9,<3",
+  "pydantic-settings>=2.5,<3",
+  "SQLAlchemy[asyncio]>=2.0.35,<3",
+  "asyncpg>=0.29,<1",
+  "aiosqlite>=0.20,<1",
+  "alembic>=1.13,<2",
+  "redis>=5,<7",
+  "arq>=0.26,<1",
+  "pymupdf>=1.24.10,<2",
+  "pypdf>=5,<7",
+  "Pillow>=13.0.0,<14",
+  "structlog>=24.4,<26",
+  "filetype>=1.2,<2",
+  "httpx>=0.27,<1",
+]
+
+[project.optional-dependencies]
+ocr = ["ocrmypdf>=16.5,<18"]
+test = ["pytest>=9.0.3,<10", "pytest-asyncio>=0.24,<2", "pytest-cov>=5,<8", "ruff>=0.7,<1", "mypy>=1.13,<2", "bandit>=1.7,<2", "pip-audit>=2.7,<3", "deptry>=0.20,<1"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "ASYNC", "S"]
+ignore = ["S101"]
+
+[tool.mypy]
+python_version = "3.12"
+mypy_path = "typings"
+strict = true
+warn_unused_ignores = true
+plugins = ["pydantic.mypy"]
+
+[tool.coverage.run]
+source = ["app"]
+branch = true
+
+[tool.deptry]
+# Exact CLI-only, dynamically selected, or test-runner dependencies; avoid a blanket DEP002 suppression.
+per_rule_ignores = { DEP002 = ["uvicorn", "asyncpg", "aiosqlite", "ocrmypdf", "pytest", "pytest-asyncio", "pytest-cov", "ruff", "mypy", "bandit", "pip-audit", "deptry"] }
